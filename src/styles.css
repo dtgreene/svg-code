@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  src: url('./assets/Montserrat-VariableFont_wght.ttf') format('opentype');
+}
+
+@layer base {
+  :root {
+    --background: #191920;
+    --foreground: #eee;
+    --ring: var(--foreground);
+
+    --muted: #a4a4b3;
+    --muted-foreground: #595959;
+
+    --primary: #30b8fc;
+    --primary-foreground: #000;
+
+    --destructive: #e86a6a;
+    --destructive-foreground: #f8fafc;
+
+    --accent: #111117;
+    --accent-foreground: #fff;
+
+    --popover: var(--background);
+    --popover-foreground: var(--foreground);
+
+    --font-montseratt: 'Montserrat';
+  }
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-background text-foreground overflow-hidden;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+  }
+
+  select {
+    appearance: none;
+  }
+
+  /* input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+
+  input[type='number'] {
+    appearance: textfield;
+  } */
+
+  /* path {
+    vector-effect: non-scaling-stroke;
+  } */
+}
+
+.lucide {
+  stroke-width: 2px;
+}
+
+.svg-preview svg {
+  @apply bg-accent border rounded-md overflow-hidden max-h-[800px];
+}
+
+.simplebar-scrollbar::before {
+  background-color: var(--foreground);
+}
