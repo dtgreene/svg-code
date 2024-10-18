@@ -10,6 +10,7 @@ import {
 import clsx from 'clsx';
 import 'simplebar-react/dist/simplebar.min.css';
 import { saveAs } from 'file-saver';
+import { downloadZip } from 'client-zip';
 
 import { app } from 'src/state/app';
 import { settings } from 'src/state/settings';
@@ -47,7 +48,7 @@ function handleFileDrop([file]) {
   reader.readAsText(file);
 }
 
-function handleDownloadGCodeClick() {
+async function handleDownloadGCodeClick() {
   if (!app.workerData) return;
 
   const {
@@ -70,11 +71,31 @@ function handleDownloadGCodeClick() {
     settings.inputError = 'Invalid feed rate';
     return;
   }
+  const { pathGrid, options } = app.workerData;
+  const plainFileName = app.fileName.replace('.svg', '');
 
-  const gcode = generateGCode(app.workerData, gcodeOptions);
-  const blob = new Blob([gcode], { type: 'text/plain' });
+  if (pathGrid.length === 1) {
+    // Download the single gcode file
+    const { pathList } = pathGrid[0];
+    const gcode = generateGCode(pathList, options, gcodeOptions);
+    const blob = new Blob([gcode], { type: 'text/plain' });
 
-  saveAs(blob, app.fileName.replace('.svg', '.gcode'));
+    saveAs(blob, `${plainFileName}.gcode`);
+  } else {
+    // Zip all of the gcode files together
+    const blob = await downloadZip(
+      pathGrid.map(({ pathList }, index) => {
+        const suffix = index.toString().padStart(2, '0');
+
+        return {
+          name: `${plainFileName}_${suffix}.gcode`,
+          input: generateGCode(pathList, options, gcodeOptions),
+        };
+      })
+    ).blob();
+
+    saveAs(blob, `${plainFileName}.zip`);
+  }
 }
 
 function handleSettingsChange() {
@@ -127,7 +148,10 @@ export const Main = () => {
 
   const previews = appSnap.workerData?.previews;
   const dataOptions = appSnap.workerData?.options;
-  const previewCols = dataOptions.grid.enabled ? dataOptions.grid.cols : 1;
+  const previewCols = dataOptions?.grid.enabled ? dataOptions?.grid.cols : 1;
+  const previewStyle = {
+    gridTemplateColumns: `repeat(${previewCols}, 1fr)`,
+  };
 
   return (
     <div className="fixed left-[420px] top-0 w-[calc(100%-420px)] h-[calc(100%-75px)] overflow-y-auto">
@@ -174,7 +198,7 @@ export const Main = () => {
               <TabsTrigger value="original">Original</TabsTrigger>
             </TabsList>
             <TabsContent value="preview">
-              <div className={`grid grid-cols-${previewCols} gap-4`}>
+              <div className="grid gap-4" style={previewStyle}>
                 {previews?.map((preview) => (
                   <PreviewSVG
                     preview={preview}

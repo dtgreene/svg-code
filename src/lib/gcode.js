@@ -1,14 +1,18 @@
 const commandExp = new RegExp(/G\d+[^G]*/g);
 
-export function generateGCode({ pathList, height }, options) {
-  const onSequence = formatInputSequence(options.toolOnSequence);
-  const offSequence = formatInputSequence(options.toolOffSequence);
-  const programBeginSequence = formatInputSequence(
-    options.programBeginSequence
-  );
-  const programEndSequence = formatInputSequence(options.programEndSequence);
+export function generateGCode(pathList, pathListOptions, gcodeOptions) {
+  const { height } = pathListOptions;
 
-  let result = ['G21', 'G90', `F${options.feedRate}`, ...offSequence];
+  const onSequence = formatInputSequence(gcodeOptions.toolOnSequence);
+  const offSequence = formatInputSequence(gcodeOptions.toolOffSequence);
+  const programBeginSequence = formatInputSequence(
+    gcodeOptions.programBeginSequence
+  );
+  const programEndSequence = formatInputSequence(
+    gcodeOptions.programEndSequence
+  );
+
+  let result = ['G21', 'G90', `F${gcodeOptions.feedRate}`, ...offSequence];
 
   if (programBeginSequence.length > 0) {
     result.push(...programBeginSequence);

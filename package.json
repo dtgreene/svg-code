@@ -19,6 +19,7 @@
     "adaptive-bezier-curve": "^1.0.3",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.0",
+    "client-zip": "^2.4.5",
     "clsx": "^2.1.1",
     "fast-xml-parser": "^4.5.0",
     "file-saver": "^2.0.5",

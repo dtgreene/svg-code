@@ -36,6 +36,7 @@ export function getPathGrid(pathList, options) {
       pageHeight,
       options
     );
+
     const bounds = {
       minX: marginX,
       maxX: options.width - marginX,

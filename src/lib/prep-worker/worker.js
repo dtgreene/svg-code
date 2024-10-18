@@ -110,7 +110,7 @@ export function workerStart() {
     settings.inputError = 'Invalid grid rows or columns';
     return;
   }
-
+  
   worker.postMessage(
     JSON.stringify({ svg: app.fileData, options: prepOptions })
   );

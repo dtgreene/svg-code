@@ -4,14 +4,14 @@ import { createPreview } from '../svg/preview';
 onmessage = (event) => {
   try {
     const { svg, options } = JSON.parse(event.data);
-    const rows = prepareSVG(svg, options);
+    const pathGrid = prepareSVG(svg, options);
 
     postMessage(
       JSON.stringify({
         isError: false,
         result: {
-          rows,
-          previews: rows.map(({ pathList, bounds }) =>
+          pathGrid,
+          previews: pathGrid.map(({ pathList, bounds }) =>
             createPreview(pathList, bounds, options)
           ),
           options,
