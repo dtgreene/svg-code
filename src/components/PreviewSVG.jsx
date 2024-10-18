@@ -28,7 +28,7 @@ export const PreviewSVG = ({ preview, width, height }) => {
         {display.toolOff && (
           <path
             d={preview.upPath}
-            className="stroke-pink-300 dark:stroke-pink-500"
+            className="stroke-orange-300/75"
           />
         )}
         {display.toolOn && (
@@ -47,7 +47,7 @@ export const PreviewSVG = ({ preview, width, height }) => {
         {display.boundingBox && (
           <path
             d={preview.boundsPath}
-            className="stroke-green-600 dark:stroke-green-500"
+            className="stroke-green-600 dark:stroke-green-500/75"
           />
         )}
       </svg>
