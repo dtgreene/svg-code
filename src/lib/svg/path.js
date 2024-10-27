@@ -14,44 +14,51 @@ export function getPathGrid(pathList, options) {
   const { grid } = options;
 
   if (grid.enabled) {
-    const pageWidth = options.width - options.marginX * 2;
-    const pageHeight = options.height - options.marginY * 2;
-    const width = pageWidth * grid.cols;
-    const height = pageHeight * grid.rows;
-    const marginX = 0;
-    const marginY = 0;
-
-    // Scale the path list to fit the total grid area without the margins.
     const { pathList: scaledPathList } = scalePathList(pathList, {
       ...options,
-      width,
-      height,
-      marginX,
-      marginY,
+      width: grid.totalWidth,
+      height: grid.totalHeight,
+      marginX: 0,
+      marginY: 0,
     });
 
-    const results = dividePathList(
-      scaledPathList,
-      pageWidth,
-      pageHeight,
-      options
-    );
+    const cellWidth = options.width - options.marginX * 2;
+    const cellHeight = options.height - options.marginY * 2;
+    const cols = Math.ceil(grid.totalWidth / cellWidth);
+    const rows = Math.ceil(grid.totalHeight / cellHeight);
+
+    const results = dividePathList(scaledPathList, {
+      cellWidth,
+      cellHeight,
+      cols,
+      rows,
+      marginX: options.marginX,
+      marginY: options.marginY,
+    });
 
     const bounds = {
-      minX: marginX,
-      maxX: options.width - marginX,
-      minY: marginY,
-      maxY: options.height - marginY,
+      minX: options.marginX,
+      maxX: options.width - options.marginX,
+      minY: options.marginY,
+      maxY: options.height - options.marginY,
     };
 
     // Re-format the grid results to include the bounds as well
-    return results.map((pathList) => ({
-      pathList,
-      bounds,
-    }));
+    return {
+      pathGrid: results.map((pathList) => ({
+        pathList,
+        bounds,
+      })),
+      cols,
+      rows,
+    };
   } else {
-    // Non-grid mode results are essentially single-cell grids
-    return [scalePathList(pathList, options)];
+    // Non-grid mode results are treated as single-cell grids
+    return {
+      pathGrid: [scalePathList(pathList, options)],
+      cols: 1,
+      rows: 1,
+    };
   }
 }
 
@@ -258,9 +265,8 @@ function scalePathList(pathList, options) {
   return { pathList: pathListCopy, bounds };
 }
 
-function dividePathList(pathList, cellWidth, cellHeight, options) {
-  const { grid, marginX, marginY } = options;
-  const { rows, cols } = grid;
+function dividePathList(pathList, options) {
+  const { cellWidth, cellHeight, cols, rows, marginX, marginY } = options;
   // This is the maximum position any point can reach. If points are found
   // beyond this position, an error will be thrown because it means we messed
   // up somewhere previously.

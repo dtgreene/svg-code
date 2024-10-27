@@ -70,20 +70,20 @@ function handleRotationChange(event) {
   settings.rotation = event.target.value;
 }
 
-function handleBoundingBoxChange(value) {
-  settings.useBoundingBox = value;
+function handleDimensionModeChange(value) {
+  settings.dimensionMode = value;
 }
 
 function handleGridChange(value) {
   settings.grid.enabled = value;
 }
 
-function handleGridRowsChange(event) {
-  settings.grid.rows = event.target.value;
+function handleGridHeightChange(event) {
+  settings.grid.totalHeight = event.target.value;
 }
 
-function handleGridColsChange(event) {
-  settings.grid.cols = event.target.value;
+function handleGridWidthChange(event) {
+  settings.grid.totalWidth = event.target.value;
 }
 
 function handleMergeChange(value) {
@@ -183,9 +183,25 @@ export const ImageTab = () => {
           </div>
         </div>
         <div>
+          <Label className="block mb-2 text-muted">Dimension Mode</Label>
+          <Tabs
+            className="w-full"
+            onValueChange={handleDimensionModeChange}
+            value={settingSnap.dimensionMode}
+          >
+            <TabsList className="flex gap-4 border rounded-md">
+              <TabsTrigger className="flex-1" value="boundingbox">
+                Bounding Box
+              </TabsTrigger>
+              <TabsTrigger className="flex-1" value="viewbox">
+                View Box
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+        <div>
           <Label className="block mb-2 text-muted">Alignment</Label>
           <Tabs
-            defaultValue="middle"
             className="w-full"
             onValueChange={handleAlignmentChange}
             value={settingSnap.alignment}
@@ -214,13 +230,6 @@ export const ImageTab = () => {
             onChange={handleRotationChange}
           />
         </div>
-        <div>
-          <Label className="block mb-2 text-muted">Use Bounding Box</Label>
-          <Switch
-            checked={settingSnap.useBoundingBox}
-            onCheckedChange={handleBoundingBoxChange}
-          />
-        </div>
       </SidebarSection>
       <SidebarSection
         label={
@@ -240,21 +249,21 @@ export const ImageTab = () => {
           <Fragment>
             <div className="flex gap-4">
               <div className="flex-1">
-                <Label className="block mb-2 text-muted">Rows</Label>
+                <Label className="block mb-2 text-muted">Total Width</Label>
                 <Input
                   type="number"
                   min="0"
-                  value={settingSnap.grid.rows}
-                  onChange={handleGridRowsChange}
+                  value={settingSnap.grid.totalWidth}
+                  onChange={handleGridWidthChange}
                 />
-              </div>
+              </div>{' '}
               <div className="flex-1">
-                <Label className="block mb-2 text-muted">Columns</Label>
+                <Label className="block mb-2 text-muted">Total Height</Label>
                 <Input
                   type="number"
                   min="0"
-                  value={settingSnap.grid.cols}
-                  onChange={handleGridColsChange}
+                  value={settingSnap.grid.totalHeight}
+                  onChange={handleGridHeightChange}
                 />
               </div>
             </div>

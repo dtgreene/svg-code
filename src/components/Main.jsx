@@ -77,24 +77,30 @@ async function handleDownloadGCodeClick() {
   if (pathGrid.length === 1) {
     // Download the single gcode file
     const { pathList } = pathGrid[0];
-    const gcode = generateGCode(pathList, options, gcodeOptions);
-    const blob = new Blob([gcode], { type: 'text/plain' });
+    if (pathList.length > 0) {
+      const gcode = generateGCode(pathList, options, gcodeOptions);
+      const blob = new Blob([gcode], { type: 'text/plain' });
 
-    saveAs(blob, `${plainFileName}.gcode`);
+      saveAs(blob, `${plainFileName}.gcode`);
+    }
   } else {
     // Zip all of the gcode files together
-    const blob = await downloadZip(
-      pathGrid.map(({ pathList }, index) => {
+    const gcode = pathGrid
+      .filter(({ pathList }) => pathList.length > 0)
+      .map(({ pathList }, index) => {
         const suffix = index.toString().padStart(2, '0');
 
         return {
           name: `${plainFileName}_${suffix}.gcode`,
           input: generateGCode(pathList, options, gcodeOptions),
         };
-      })
-    ).blob();
+      });
 
-    saveAs(blob, `${plainFileName}.zip`);
+    if (gcode.length > 0) {
+      const blob = await downloadZip(gcode).blob();
+
+      saveAs(blob, `${plainFileName}.zip`);
+    }
   }
 }
 
@@ -148,7 +154,7 @@ export const Main = () => {
 
   const previews = appSnap.workerData?.previews;
   const dataOptions = appSnap.workerData?.options;
-  const previewCols = dataOptions?.grid.enabled ? dataOptions?.grid.cols : 1;
+  const previewCols = dataOptions?.grid.enabled ? appSnap.workerData?.cols : 1;
   const previewStyle = {
     gridTemplateColumns: `repeat(${previewCols}, 1fr)`,
   };

@@ -25,7 +25,7 @@ export function workerStart() {
     marginY,
     alignment,
     rotation,
-    useBoundingBox,
+    dimensionMode,
     postProcessing,
     grid,
   } = settings;
@@ -40,6 +40,7 @@ export function workerStart() {
   } = postProcessing;
 
   const alignmentIndex = ['start', 'middle', 'end'].indexOf(alignment);
+  const useBoundingBox = dimensionMode === 'boundingbox';
   const prepOptions = {
     width: Number(width) || 0,
     height: Number(height) || 0,
@@ -59,8 +60,8 @@ export function workerStart() {
     },
     grid: {
       enabled: grid.enabled,
-      cols: Number(grid.cols) || 0,
-      rows: Number(grid.rows) || 0,
+      totalWidth: Number(grid.totalWidth) || 0,
+      totalHeight: Number(grid.totalHeight) || 0,
     },
   };
 
@@ -105,12 +106,22 @@ export function workerStart() {
 
   if (
     prepOptions.grid.enabled &&
-    (prepOptions.grid.rows <= 0 || prepOptions.grid.cols <= 0)
+    (prepOptions.grid.totalWidth <= 0 || prepOptions.grid.totalHeight <= 0)
   ) {
-    settings.inputError = 'Invalid grid rows or columns';
+    settings.inputError = 'Invalid grid width or height';
     return;
   }
-  
+
+  if (
+    prepOptions.grid.enabled &&
+    (prepOptions.grid.totalWidth < prepOptions.width ||
+      prepOptions.grid.totalHeight < prepOptions.height)
+  ) {
+    settings.inputError =
+      'Invalid grid width or height; must be greater than the base width and height';
+    return;
+  }
+
   worker.postMessage(
     JSON.stringify({ svg: app.fileData, options: prepOptions })
   );

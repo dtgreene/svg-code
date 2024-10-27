@@ -58,7 +58,7 @@ export function prepareSVG(data, options) {
   };
 
   const pathList = getPathList(elements, pathOptions);
-  const pathGrid = getPathGrid(pathList, pathOptions);
+  const { pathGrid, cols, rows } = getPathGrid(pathList, pathOptions);
 
   pathGrid.forEach((col) => {
     if (postProcessing.merge) {
@@ -84,7 +84,11 @@ export function prepareSVG(data, options) {
     }
   });
 
-  return pathGrid;
+  return {
+    pathGrid,
+    cols,
+    rows,
+  };
 }
 
 function flattenGroup(group, prevTransform = '') {

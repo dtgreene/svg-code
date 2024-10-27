@@ -1,6 +1,8 @@
 const commandExp = new RegExp(/G\d+[^G]*/g);
 
 export function generateGCode(pathList, pathListOptions, gcodeOptions) {
+  if (pathList.length === 0) return '';
+
   const { height } = pathListOptions;
 
   const onSequence = formatInputSequence(gcodeOptions.toolOnSequence);

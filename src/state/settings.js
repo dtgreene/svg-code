@@ -8,11 +8,11 @@ export const settings = createStorageProxy(StorageKeys.SETTINGS, {
   marginY: '20',
   alignment: 'middle',
   rotation: '0',
-  useBoundingBox: true,
+  dimensionMode: 'boundingbox',
   grid: {
     enabled: false,
-    cols: '2',
-    rows: '2',
+    totalWidth: '297',
+    totalHeight: '420',
   },
   postProcessing: {
     merge: true,
