@@ -21,3 +21,8 @@ Inspired by [svg2gcode](https://github.com/sameer/svg2gcode) and [saxi](https://
 ### Stack
 
 Built using React, Vite, TailwindCSS, and [Shadcn](https://github.com/shadcn-ui/ui).
+
+### Examples
+
+![IMG_1029](https://github.com/user-attachments/assets/ebed609d-10aa-491b-83f7-8b52c738f87b)
+![IMG_1034](https://github.com/user-attachments/assets/1851ffb3-8524-4b56-b1c9-6295b9090e70)
