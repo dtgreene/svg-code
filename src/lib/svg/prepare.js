@@ -60,25 +60,25 @@ export function prepareSVG(data, options) {
   const pathList = getPathList(elements, pathOptions);
   const { pathGrid, cols, rows } = getPathGrid(pathList, pathOptions);
 
-  pathGrid.forEach((col) => {
+  pathGrid.forEach((cell) => {
     if (postProcessing.merge) {
-      col.pathList = merge(col.pathList, postProcessing.mergeTolerance);
+      cell.pathList = merge(cell.pathList, postProcessing.mergeTolerance);
     }
 
     if (postProcessing.filterShort) {
-      col.pathList = elideShorterThan(
-        col.pathList,
+      cell.pathList = elideShorterThan(
+        cell.pathList,
         postProcessing.filterShortLength
       );
     }
 
     if (postProcessing.reorder) {
-      col.pathList = reorder(col.pathList);
+      cell.pathList = reorder(cell.pathList);
     }
 
     if (postProcessing.randomizeStart) {
-      col.pathList = randomizeStart(
-        col.pathList,
+      cell.pathList = randomizeStart(
+        cell.pathList,
         postProcessing.randomizeStartTolerance
       );
     }

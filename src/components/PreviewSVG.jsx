@@ -2,7 +2,7 @@ import { useSnapshot } from 'valtio';
 
 import { settings } from 'src/state/settings';
 
-const dashStyle = { strokeDasharray: '4 4' };
+const dashStyle = { strokeDasharray: '5 8' };
 
 export const PreviewSVGRoot = ({ children, ...props }) => (
   <div className="flex justify-center svg-preview" {...props}>
@@ -26,29 +26,23 @@ export const PreviewSVG = ({ preview, width, height }) => {
         strokeWidth={Number(display.strokeWidth) || 0}
       >
         {display.toolOff && (
-          <path
-            d={preview.upPath}
-            className="stroke-orange-300/75"
-          />
+          <path d={preview.upPath} className="stroke-orange-300/75" />
         )}
         {display.toolOn && (
-          <path
-            d={preview.downPath}
-            className="stroke-black dark:stroke-zinc-200"
-          />
+          <path d={preview.downPath} className="stroke-zinc-200" />
         )}
         {display.margins && (
           <path
             d={preview.marginsPath}
-            className="stroke-black dark:stroke-zinc-200"
+            className="stroke-zinc-200/50"
             style={dashStyle}
           />
         )}
-        {display.boundingBox && (
-          <path
-            d={preview.boundsPath}
-            className="stroke-green-600 dark:stroke-green-500/75"
-          />
+        {display.pathBounds && (
+          <path d={preview.pathBoundsPath} className="stroke-green-500/75" />
+        )}
+        {display.gridBounds && settingSnap.grid.enabled && (
+          <path d={preview.gridBoundsPath} className="stroke-red-500" />
         )}
       </svg>
     </PreviewSVGRoot>

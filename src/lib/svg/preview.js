@@ -1,10 +1,12 @@
 import { nanoid } from 'nanoid';
 
-export function createPreview(pathList, bounds, options) {
+export function createPreview(cell, options) {
+  const { pathList, pathBounds, gridBounds } = cell;
   const { width, height, marginX, marginY } = options;
 
   let downPath = '';
   let upPath = '';
+  let gridBoundsPath = '';
   let position = { x: 0, y: height };
 
   if (pathList.length > 0) {
@@ -28,24 +30,33 @@ export function createPreview(pathList, bounds, options) {
     `L${width - marginX},${height - marginY}`,
     `L${marginX},${height - marginY}`,
     `L${marginX},${marginY}`,
-  ].join('');
+  ].join(' ');
 
-  const { minX, minY, maxX, maxY } = bounds;
-  const boundsPath = [
-    `M${minX},${minY}`,
-    `L${maxX},${minY}`,
-    `L${maxX},${maxY}`,
-    `L${minX},${maxY}`,
-    `L${minX},${minY}`,
-  ].join('');
+  const pathBoundsPath = getBoundsPath(pathBounds);
+
+  if (gridBounds) {
+    gridBoundsPath = getBoundsPath(gridBounds);
+  }
 
   return {
     downPath,
     upPath,
     marginsPath,
-    boundsPath,
+    pathBoundsPath,
+    gridBoundsPath,
     width,
     height,
     id: nanoid(),
   };
+}
+
+function getBoundsPath(bounds) {
+  const { minX, minY, maxX, maxY } = bounds;
+  return [
+    `M${minX},${minY}`,
+    `L${maxX},${minY}`,
+    `L${maxX},${maxY}`,
+    `L${minX},${maxY}`,
+    `L${minX},${minY}`,
+  ].join(' ');
 }

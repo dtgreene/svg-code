@@ -62,11 +62,13 @@ export function workerStart() {
       enabled: grid.enabled,
       totalWidth: Number(grid.totalWidth) || 0,
       totalHeight: Number(grid.totalHeight) || 0,
+      includeCorners: grid.includeCorners,
+      cornerLength: Number(grid.cornerLength) || 0,
     },
   };
 
   if (prepOptions.width <= 0 || prepOptions.height <= 0) {
-    settings.inputError = 'Invalid dimensions';
+    settings.inputError = 'Invalid dimensions; must be positive';
     return;
   }
 
@@ -104,22 +106,38 @@ export function workerStart() {
     return;
   }
 
-  if (
-    prepOptions.grid.enabled &&
-    (prepOptions.grid.totalWidth <= 0 || prepOptions.grid.totalHeight <= 0)
-  ) {
-    settings.inputError = 'Invalid grid width or height';
-    return;
-  }
+  if (prepOptions.grid.enabled) {
+    if (prepOptions.grid.totalWidth <= 0 || prepOptions.grid.totalHeight <= 0) {
+      settings.inputError = 'Invalid grid width or height';
+      return;
+    }
 
-  if (
-    prepOptions.grid.enabled &&
-    (prepOptions.grid.totalWidth < prepOptions.width ||
-      prepOptions.grid.totalHeight < prepOptions.height)
-  ) {
-    settings.inputError =
-      'Invalid grid width or height; must be greater than the base width and height';
-    return;
+    if (
+      prepOptions.grid.totalWidth < prepOptions.width ||
+      prepOptions.grid.totalHeight < prepOptions.height
+    ) {
+      settings.inputError =
+        'Invalid grid dimensions; each dimension must be greater than its corresponding base dimension';
+      return;
+    }
+
+    if (
+      prepOptions.grid.includeCorners &&
+      prepOptions.grid.cornerLength === 0
+    ) {
+      settings.inputError = 'Invalid corner length; must be greater than zero';
+      return;
+    }
+
+    if (
+      prepOptions.grid.includeCorners &&
+      (prepOptions.grid.cornerLength > prepOptions.width * 0.5 ||
+        prepOptions.grid.cornerLength > prepOptions.height * 0.5)
+    ) {
+      settings.inputError =
+        'Invalid corner length; must be less than half of the smallest base dimension';
+      return;
+    }
   }
 
   worker.postMessage(

@@ -11,44 +11,112 @@ const defaultBezierOptions = {
 const segmentBezier = createBezierBuilder(defaultBezierOptions);
 
 export function getPathGrid(pathList, options) {
-  const { grid } = options;
+  const { grid, marginX, marginY } = options;
 
   if (grid.enabled) {
-    const { pathList: scaledPathList } = scalePathList(pathList, {
-      ...options,
-      width: grid.totalWidth,
-      height: grid.totalHeight,
-      marginX: 0,
-      marginY: 0,
-    });
+    const totalWidth = grid.totalWidth;
+    const totalHeight = grid.totalHeight;
+    const { pathList: scaledPathList, pathBounds: scaledPathBounds } =
+      scalePathList(pathList, {
+        ...options,
+        width: totalWidth,
+        height: totalHeight,
+        marginX: 0,
+        marginY: 0,
+      });
 
-    const cellWidth = options.width - options.marginX * 2;
-    const cellHeight = options.height - options.marginY * 2;
-    const cols = Math.ceil(grid.totalWidth / cellWidth);
-    const rows = Math.ceil(grid.totalHeight / cellHeight);
+    const cellWidth = options.width - marginX * 2;
+    const cellHeight = options.height - marginY * 2;
+    const cols = Math.ceil(totalWidth / cellWidth);
+    const rows = Math.ceil(totalHeight / cellHeight);
 
     const results = dividePathList(scaledPathList, {
       cellWidth,
       cellHeight,
       cols,
       rows,
-      marginX: options.marginX,
-      marginY: options.marginY,
+      marginX,
+      marginY,
     });
 
-    const bounds = {
-      minX: options.marginX,
-      maxX: options.width - options.marginX,
-      minY: options.marginY,
-      maxY: options.height - options.marginY,
+    // Add margins to the scaled bounds
+    scaledPathBounds.minX += marginX;
+    scaledPathBounds.maxX += marginX;
+    scaledPathBounds.minY += marginY;
+    scaledPathBounds.maxY += marginY;
+
+    const totalGridBounds = {
+      minX: marginX,
+      maxX: marginX + totalWidth,
+      minY: marginY,
+      maxY: marginY + totalHeight,
     };
+
+    const { includeCorners, cornerLength } = grid;
+    const cornerPathList = [
+      [
+        // Top left
+        { x: marginX, y: marginY + cornerLength },
+        { x: marginX, y: marginY },
+        { x: marginX + cornerLength, y: marginY },
+      ],
+      [
+        // Top right
+        { x: options.width - marginX - cornerLength, y: marginY },
+        { x: options.width - marginX, y: marginY },
+        { x: options.width - marginX, y: marginY + cornerLength },
+      ],
+      [
+        // Bottom right
+        {
+          x: options.width - marginX,
+          y: options.height - marginY - cornerLength,
+        },
+        { x: options.width - marginX, y: options.height - marginY },
+        {
+          x: options.width - marginX - cornerLength,
+          y: options.height - marginY,
+        },
+      ],
+      [
+        // Bottom left
+        { x: marginX + cornerLength, y: options.height - marginY },
+        { x: marginX, y: options.height - marginY },
+        { x: marginX, y: options.height - marginY - cornerLength },
+      ],
+    ];
 
     // Re-format the grid results to include the bounds as well
     return {
-      pathGrid: results.map((pathList) => ({
-        pathList,
-        bounds,
-      })),
+      pathGrid: results.map((pathList, index) => {
+        const pageCol = Math.floor(index % cols);
+        const pageRow = Math.floor(index / cols);
+        const xOffset = pageCol * cellWidth;
+        const yOffset = pageRow * cellHeight;
+
+        const pathBounds = createCellBounds(
+          scaledPathBounds,
+          xOffset,
+          yOffset,
+          options
+        );
+        const gridBounds = createCellBounds(
+          totalGridBounds,
+          xOffset,
+          yOffset,
+          options
+        );
+
+        if (includeCorners) {
+          pathList.unshift(...cornerPathList);
+        }
+
+        return {
+          pathList,
+          pathBounds,
+          gridBounds,
+        };
+      }),
       cols,
       rows,
     };
@@ -184,6 +252,47 @@ export function getPathList(elements, options) {
   return pathList;
 }
 
+function createCellBounds(worldBounds, xOffset, yOffset, options) {
+  const cellBounds = {
+    minX: xOffset + options.marginX,
+    maxX: xOffset + options.width - options.marginX,
+    minY: yOffset + options.marginY,
+    maxY: yOffset + options.height - options.marginY,
+  };
+
+  if (
+    worldBounds.minX >= cellBounds.minX &&
+    worldBounds.minX <= cellBounds.maxX
+  ) {
+    cellBounds.minX = worldBounds.minX;
+  }
+  if (
+    worldBounds.maxX >= cellBounds.minX &&
+    worldBounds.maxX <= cellBounds.maxX
+  ) {
+    cellBounds.maxX = worldBounds.maxX;
+  }
+  if (
+    worldBounds.minY >= cellBounds.minY &&
+    worldBounds.minY <= cellBounds.maxY
+  ) {
+    cellBounds.minY = worldBounds.minY;
+  }
+  if (
+    worldBounds.maxY >= cellBounds.minY &&
+    worldBounds.maxY <= cellBounds.maxY
+  ) {
+    cellBounds.maxY = worldBounds.maxY;
+  }
+
+  cellBounds.minX -= xOffset;
+  cellBounds.maxX -= xOffset;
+  cellBounds.minY -= yOffset;
+  cellBounds.maxY -= yOffset;
+
+  return cellBounds;
+}
+
 function scalePathList(pathList, options) {
   const pathListCopy = structuredClone(pathList);
   const {
@@ -198,7 +307,7 @@ function scalePathList(pathList, options) {
     useBoundingBox,
   } = options;
 
-  const bounds = {
+  const pathBounds = {
     minX: Infinity,
     maxX: -Infinity,
     minY: Infinity,
@@ -208,10 +317,10 @@ function scalePathList(pathList, options) {
   // Calculate the bounding box
   pathListCopy.forEach((path) => {
     path.forEach((point) => {
-      bounds.minX = Math.min(point.x, bounds.minX);
-      bounds.maxX = Math.max(point.x, bounds.maxX);
-      bounds.minY = Math.min(point.y, bounds.minY);
-      bounds.maxY = Math.max(point.y, bounds.maxY);
+      pathBounds.minX = Math.min(point.x, pathBounds.minX);
+      pathBounds.maxX = Math.max(point.x, pathBounds.maxX);
+      pathBounds.minY = Math.min(point.y, pathBounds.minY);
+      pathBounds.maxY = Math.max(point.y, pathBounds.maxY);
     });
   });
 
@@ -221,11 +330,11 @@ function scalePathList(pathList, options) {
   let offsetY = 0;
 
   if (useBoundingBox) {
-    inputWidth = bounds.maxX - bounds.minX;
-    inputHeight = bounds.maxY - bounds.minY;
+    inputWidth = pathBounds.maxX - pathBounds.minX;
+    inputHeight = pathBounds.maxY - pathBounds.minY;
 
-    offsetX = -bounds.minX;
-    offsetY = -bounds.minY;
+    offsetX = -pathBounds.minX;
+    offsetY = -pathBounds.minY;
   } else {
     const rotationRads = (rotation * Math.PI) / 180;
     const sin = Math.abs(Math.sin(rotationRads));
@@ -257,12 +366,12 @@ function scalePathList(pathList, options) {
   });
 
   // Scale the bounds
-  bounds.minX = (bounds.minX + offsetX) * scale + alignX + marginX;
-  bounds.minY = (bounds.minY + offsetY) * scale + alignY + marginY;
-  bounds.maxX = (bounds.maxX + offsetX) * scale + alignX + marginX;
-  bounds.maxY = (bounds.maxY + offsetY) * scale + alignY + marginY;
+  pathBounds.minX = (pathBounds.minX + offsetX) * scale + alignX + marginX;
+  pathBounds.minY = (pathBounds.minY + offsetY) * scale + alignY + marginY;
+  pathBounds.maxX = (pathBounds.maxX + offsetX) * scale + alignX + marginX;
+  pathBounds.maxY = (pathBounds.maxY + offsetY) * scale + alignY + marginY;
 
-  return { pathList: pathListCopy, bounds };
+  return { pathList: pathListCopy, pathBounds };
 }
 
 function dividePathList(pathList, options) {
@@ -300,7 +409,8 @@ function dividePathList(pathList, options) {
             point.y < 0 ||
             point.y > maxPageY
           ) {
-            // An invalid point will never be added to a cell and would cause an infinite loop.
+            // An invalid point will never be added to a cell and would cause an
+            // infinite loop.
             throw new Error(
               `Invalid point found during path division: ${point.x}, ${point.y}`
             );

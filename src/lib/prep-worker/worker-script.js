@@ -11,9 +11,7 @@ onmessage = (event) => {
         isError: false,
         result: {
           pathGrid,
-          previews: pathGrid.map(({ pathList, bounds }) =>
-            createPreview(pathList, bounds, options)
-          ),
+          previews: pathGrid.map((cell) => createPreview(cell, options)),
           options,
           cols,
           rows,

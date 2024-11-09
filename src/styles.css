@@ -46,19 +46,6 @@
   select {
     appearance: none;
   }
-
-  /* input[type='number']::-webkit-outer-spin-button,
-  input[type='number']::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-  }
-
-  input[type='number'] {
-    appearance: textfield;
-  } */
-
-  /* path {
-    vector-effect: non-scaling-stroke;
-  } */
 }
 
 .lucide {
@@ -66,7 +53,7 @@
 }
 
 .svg-preview svg {
-  @apply bg-accent border rounded-md overflow-hidden max-h-[800px];
+  @apply bg-accent border overflow-hidden max-h-[800px];
 }
 
 .simplebar-scrollbar::before {

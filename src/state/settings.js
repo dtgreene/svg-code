@@ -13,6 +13,8 @@ export const settings = createStorageProxy(StorageKeys.SETTINGS, {
     enabled: false,
     totalWidth: '297',
     totalHeight: '420',
+    includeCorners: false,
+    cornerLength: 10,
   },
   postProcessing: {
     merge: true,
@@ -27,7 +29,8 @@ export const settings = createStorageProxy(StorageKeys.SETTINGS, {
     toolOn: true,
     toolOff: true,
     margins: true,
-    boundingBox: false,
+    pathBounds: false,
+    gridBounds: false,
     strokeWidth: '1',
   },
   gcode: {

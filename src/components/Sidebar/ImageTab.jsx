@@ -86,6 +86,14 @@ function handleGridWidthChange(event) {
   settings.grid.totalWidth = event.target.value;
 }
 
+function handleIncludeCornersChange(value) {
+  settings.grid.includeCorners = value;
+}
+
+function handleCornerLengthChange(event) {
+  settings.grid.cornerLength = event.target.value;
+}
+
 function handleMergeChange(value) {
   settings.postProcessing.merge = value;
 }
@@ -264,6 +272,24 @@ export const ImageTab = () => {
                   min="0"
                   value={settingSnap.grid.totalHeight}
                   onChange={handleGridHeightChange}
+                />
+              </div>
+            </div>
+            <div className="flex justify-between">
+              <div className="flex-1">
+                <Label className="block mb-2 text-muted">Include Corners</Label>
+                <Switch
+                  checked={settingSnap.grid.includeCorners}
+                  onCheckedChange={handleIncludeCornersChange}
+                />
+              </div>
+              <div className="flex-1">
+                <Label className="block mb-2 text-muted">Corner Length</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  value={settingSnap.grid.cornerLength}
+                  onChange={handleCornerLengthChange}
                 />
               </div>
             </div>

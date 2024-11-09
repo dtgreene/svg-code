@@ -6,7 +6,6 @@ import { SidebarSection } from './SidebarSection';
 import { Label } from 'ui/Label';
 import { Switch } from 'ui/Switch';
 import { Input } from 'ui/Input';
-import { Button } from '../ui/Button';
 
 function handleDisplayToolOnChange(value) {
   settings.display.toolOn = value;
@@ -20,8 +19,12 @@ function handleDisplayMarginsChange(value) {
   settings.display.margins = value;
 }
 
-function handleDisplayBoundingBoxChange(value) {
-  settings.display.boundingBox = value;
+function handleDisplayPathBoundsChange(value) {
+  settings.display.pathBounds = value;
+}
+
+function handleDisplayGridBoundsChange(value) {
+  settings.display.gridBounds = value;
 }
 
 function handleStrokeWidthChange(event) {
@@ -55,6 +58,7 @@ export const AppTab = () => {
               checked={settingSnap.display.toolOn}
               onCheckedChange={handleDisplayToolOnChange}
             />
+            <div className="w-4 h-4 rounded bg-zinc-200"></div>
             <span>Tool On</span>
           </Label>
           <Label className="flex items-center gap-2 w-1/2">
@@ -62,6 +66,7 @@ export const AppTab = () => {
               checked={settingSnap.display.toolOff}
               onCheckedChange={handleDisplayToolOffChange}
             />
+            <div className="w-4 h-4 rounded bg-orange-300/75"></div>
             <span>Tool Off</span>
           </Label>
         </div>
@@ -71,16 +76,30 @@ export const AppTab = () => {
               checked={settingSnap.display.margins}
               onCheckedChange={handleDisplayMarginsChange}
             />
+            <div className="w-4 h-4 rounded bg-zinc-200/50"></div>
             <span>Margins</span>
           </Label>
           <Label className="flex items-center gap-2 w-1/2">
             <Switch
-              checked={settingSnap.display.boundingBox}
-              onCheckedChange={handleDisplayBoundingBoxChange}
+              checked={settingSnap.display.pathBounds}
+              onCheckedChange={handleDisplayPathBoundsChange}
             />
-            <span>Bounding Box</span>
+            <div className="w-4 h-4 rounded bg-green-500/75"></div>
+            <span>Path Bounds</span>
           </Label>
         </div>
+        {settingSnap.grid.enabled && (
+          <div className="flex">
+            <Label className="flex items-center gap-2 w-1/2">
+              <Switch
+                checked={settingSnap.display.gridBounds}
+                onCheckedChange={handleDisplayGridBoundsChange}
+              />
+              <div className="w-4 h-4 rounded bg-red-500/75"></div>
+              <span>Grid Bounds</span>
+            </Label>
+          </div>
+        )}
         <div>
           <Label className="block mb-2 text-muted">Stroke Width</Label>
           <Input
