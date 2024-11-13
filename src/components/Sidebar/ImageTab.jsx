@@ -275,7 +275,7 @@ export const ImageTab = () => {
                 />
               </div>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-between gap-4">
               <div className="flex-1">
                 <Label className="block mb-2 text-muted">Include Corners</Label>
                 <Switch

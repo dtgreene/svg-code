@@ -86,7 +86,7 @@ export function getPathGrid(pathList, options) {
       ],
     ];
 
-    // Re-format the grid results to include the bounds as well
+    // Re-format the grid results to include the bounds and add the corners.
     return {
       pathGrid: results.map((pathList, index) => {
         const pageCol = Math.floor(index % cols);
@@ -377,8 +377,8 @@ function scalePathList(pathList, options) {
 function dividePathList(pathList, options) {
   const { cellWidth, cellHeight, cols, rows, marginX, marginY } = options;
   // This is the maximum position any point can reach. If points are found
-  // beyond this position, an error will be thrown because it means we messed
-  // up somewhere previously.
+  // beyond this position, an error will be thrown because it means we messed up
+  // somewhere previously.
   const maxPageX = cellWidth * cols;
   const maxPageY = cellHeight * rows;
 

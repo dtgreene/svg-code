@@ -113,15 +113,6 @@ export function workerStart() {
     }
 
     if (
-      prepOptions.grid.totalWidth < prepOptions.width ||
-      prepOptions.grid.totalHeight < prepOptions.height
-    ) {
-      settings.inputError =
-        'Invalid grid dimensions; each dimension must be greater than its corresponding base dimension';
-      return;
-    }
-
-    if (
       prepOptions.grid.includeCorners &&
       prepOptions.grid.cornerLength === 0
     ) {

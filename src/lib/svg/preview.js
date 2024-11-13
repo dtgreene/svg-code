@@ -1,5 +1,20 @@
 import { nanoid } from 'nanoid';
 
+export function generateSVG(d, width, height, strokeWidth) {
+  const paperViewBox = `0 0 ${width || 0} ${height || 0}`;
+
+  return `<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="${paperViewBox}"
+  strokeLinecap="round"
+  strokeWidth="${strokeWidth}"
+  stroke="#000"
+  fill="none"
+>
+  <path d="${d}" />
+</svg>`;
+}
+
 export function createPreview(cell, options) {
   const { pathList, pathBounds, gridBounds } = cell;
   const { width, height, marginX, marginY } = options;
@@ -7,6 +22,7 @@ export function createPreview(cell, options) {
   let downPath = '';
   let upPath = '';
   let gridBoundsPath = '';
+  let marginsPath = '';
   let position = { x: 0, y: height };
 
   if (pathList.length > 0) {
@@ -24,13 +40,15 @@ export function createPreview(cell, options) {
     upPath = upPath.trim();
   }
 
-  const marginsPath = [
-    `M${marginX},${marginY}`,
-    `L${width - marginX},${marginY}`,
-    `L${width - marginX},${height - marginY}`,
-    `L${marginX},${height - marginY}`,
-    `L${marginX},${marginY}`,
-  ].join(' ');
+  if (marginX !== 0 || marginY !== 0) {
+    marginsPath = [
+      `M${marginX},${marginY}`,
+      `L${width - marginX},${marginY}`,
+      `L${width - marginX},${height - marginY}`,
+      `L${marginX},${height - marginY}`,
+      `L${marginX},${marginY}`,
+    ].join(' ');
+  }
 
   const pathBoundsPath = getBoundsPath(pathBounds);
 

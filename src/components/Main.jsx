@@ -21,6 +21,7 @@ import { debouncedWorkerStart } from 'src/lib/prep-worker/worker';
 import { PreviewSVG, PreviewSVGRoot } from './PreviewSVG';
 import { generateGCode } from 'src/lib/gcode';
 import { StorageKeys } from 'src/state/storage';
+import { generateSVG } from 'src/lib/svg/preview';
 
 // The maximum file size (in bytes) allowed for saving to local storage. Files
 // larger than this can be used, we just won't save them to the local storage.
@@ -48,6 +49,51 @@ function handleFileDrop([file]) {
   reader.readAsText(file);
 }
 
+async function handleDownloadSVGClick() {
+  if (!app.workerData) return;
+
+  const { previews, options } = app.workerData;
+  const downPaths = previews
+    .map(({ downPath }) => downPath)
+    .filter((downPath) => downPath.length > 0);
+
+  if (downPaths.length === 0) {
+    return;
+  }
+
+  const plainFileName = app.fileName.replace('.svg', '');
+  const strokeWidth = Number(settings.strokeWidth) || 0;
+
+  if (downPaths.length === 1) {
+    const file = generateSVG(
+      downPaths[0],
+      options.width,
+      options.height,
+      strokeWidth
+    );
+    const blob = new Blob([file], { type: 'image/svg+xml' });
+
+    saveAs(blob, `${plainFileName}.svg`);
+  } else {
+    const files = downPaths.map((downPath, index) => {
+      const suffix = index.toString().padStart(2, '0');
+
+      return {
+        name: `${plainFileName}_${suffix}.svg`,
+        input: generateSVG(
+          downPath,
+          options.width,
+          options.height,
+          strokeWidth
+        ),
+      };
+    });
+    const blob = await downloadZip(files).blob();
+
+    saveAs(blob, `${plainFileName}.zip`);
+  }
+}
+
 async function handleDownloadGCodeClick() {
   if (!app.workerData) return;
 
@@ -72,35 +118,33 @@ async function handleDownloadGCodeClick() {
     return;
   }
   const { pathGrid, options } = app.workerData;
+  const pathGrids = pathGrid
+    .map(({ pathList }) => pathList)
+    .filter((pathList) => pathList.length > 0);
+
+  if (pathGrids.length === 0) {
+    return;
+  }
+
   const plainFileName = app.fileName.replace('.svg', '');
 
-  if (pathGrid.length === 1) {
-    // Download the single gcode file
-    const { pathList } = pathGrid[0];
-    if (pathList.length > 0) {
-      const gcode = generateGCode(pathList, options, gcodeOptions);
-      const blob = new Blob([gcode], { type: 'text/plain' });
+  if (pathGrids.length === 1) {
+    const file = generateGCode(pathGrids[0], options, gcodeOptions);
+    const blob = new Blob([file], { type: 'text/plain' });
 
-      saveAs(blob, `${plainFileName}.gcode`);
-    }
+    saveAs(blob, `${plainFileName}.gcode`);
   } else {
-    // Zip all of the gcode files together
-    const gcode = pathGrid
-      .filter(({ pathList }) => pathList.length > 0)
-      .map(({ pathList }, index) => {
-        const suffix = index.toString().padStart(2, '0');
+    const files = pathGrids.map((pathList, index) => {
+      const suffix = index.toString().padStart(2, '0');
 
-        return {
-          name: `${plainFileName}_${suffix}.gcode`,
-          input: generateGCode(pathList, options, gcodeOptions),
-        };
-      });
+      return {
+        name: `${plainFileName}_${suffix}.gcode`,
+        input: generateGCode(pathList, options, gcodeOptions),
+      };
+    });
+    const blob = await downloadZip(files).blob();
 
-    if (gcode.length > 0) {
-      const blob = await downloadZip(gcode).blob();
-
-      saveAs(blob, `${plainFileName}.zip`);
-    }
+    saveAs(blob, `${plainFileName}.zip`);
   }
 }
 
@@ -244,10 +288,18 @@ export const Main = () => {
           <Button
             className="flex gap-2"
             disabled={!appSnap.workerData}
+            onClick={handleDownloadSVGClick}
+          >
+            <DownloadIcon />
+            <span>SVG</span>
+          </Button>
+          <Button
+            className="flex gap-2"
+            disabled={!appSnap.workerData}
             onClick={handleDownloadGCodeClick}
           >
             <DownloadIcon />
-            <span>Download G-Code</span>
+            <span>G-Code</span>
           </Button>
         </div>
       </div>
