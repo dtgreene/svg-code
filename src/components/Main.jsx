@@ -155,6 +155,10 @@ function handleSettingsChange() {
   }
 }
 
+function handleBackdropClick() {
+  app.sidebarOpen = false;
+}
+
 const ImagePlaceholder = () => (
   <div className="flex flex-col items-center justify-center text-muted h-[300px] bg-accent border rounded-md">
     <FileImageIcon width="120" height="120" />
@@ -205,13 +209,13 @@ export const Main = () => {
     gridTemplateColumns: `repeat(${previewCols}, 1fr)`,
   };
 
-  const sidebarStyle =
-    size.width > 1000
-      ? {
-          'left-[420px]': appSnap.sidebarOpen,
-          'left-0': !appSnap.sidebarOpen,
-        }
-      : 'left-0';
+  const isScreenLarge = size.width > 1000;
+  const sidebarStyle = isScreenLarge
+    ? {
+        'left-[420px]': appSnap.sidebarOpen,
+        'left-0': !appSnap.sidebarOpen,
+      }
+    : 'left-0';
 
   return (
     <div
@@ -322,6 +326,15 @@ export const Main = () => {
           </Button>
         </div>
       </div>
+      {!isScreenLarge && appSnap.sidebarOpen && (
+        <div
+          className={clsx(
+            'fixed top-[50px] right-0 bottom-0 bg-zinc-950/50',
+            sidebarStyle
+          )}
+          onClick={handleBackdropClick}
+        />
+      )}
     </div>
   );
 };
