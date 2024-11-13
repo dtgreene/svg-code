@@ -11,10 +11,10 @@ Inspired by [svg2gcode](https://github.com/sameer/svg2gcode) and [saxi](https://
 
 ### Features
 
-- Alignment, size, rotation, and margin options
-- Path post-processing (using the [optimize-paths](https://github.com/nornagon/optimize-paths) library)
-- Grid mode for slicing projects into multiple pieces
-- Settings are saved into local storage including the SVG data (if file size is small enough)
+- Easy alignment, size, rotation, and margin options.
+- Path post-processing (using the [optimize-paths](https://github.com/nornagon/optimize-paths) library).
+- Grid mode for slicing larger projects into multiple pieces.
+- Settings are saved into local storage including the SVG data (if file size is small enough).
 
 ![Screenshot 2024-11-08 at 22-53-08 SVG-Code](https://github.com/user-attachments/assets/a3b79302-914f-42e2-bc14-a5cad1b135dd)
 
