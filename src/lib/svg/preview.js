@@ -21,6 +21,7 @@ export function createPreview(cell, options) {
 
   let downPath = '';
   let upPath = '';
+  let pathBoundsPath = '';
   let gridBoundsPath = '';
   let marginsPath = '';
   let position = { x: 0, y: height };
@@ -38,6 +39,8 @@ export function createPreview(cell, options) {
 
     downPath = downPath.trim();
     upPath = upPath.trim();
+
+    pathBoundsPath = getBoundsPath(pathBounds);
   }
 
   if (marginX !== 0 || marginY !== 0) {
@@ -49,8 +52,6 @@ export function createPreview(cell, options) {
       `L${marginX},${marginY}`,
     ].join(' ');
   }
-
-  const pathBoundsPath = getBoundsPath(pathBounds);
 
   if (gridBounds) {
     gridBoundsPath = getBoundsPath(gridBounds);
