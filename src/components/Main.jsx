@@ -222,7 +222,6 @@ export const Main = () => {
             <div className="text-muted">
               <span>Selected file:</span>
               <span className={clsx({ 'text-primary': !!appSnap.fileName })}>
-                {' '}
                 {appSnap.fileName || 'None'}
               </span>
             </div>

@@ -264,7 +264,7 @@ export const ImageTab = () => {
                   value={settingSnap.grid.totalWidth}
                   onChange={handleGridWidthChange}
                 />
-              </div>{' '}
+              </div>
               <div className="flex-1">
                 <Label className="block mb-2 text-muted">Total Height</Label>
                 <Input
