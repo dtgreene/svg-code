@@ -15,6 +15,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-switch": "^1.1.1",
     "@radix-ui/react-tabs": "^1.1.1",
+    "@uidotdev/usehooks": "^2.4.1",
     "@vitejs/plugin-react": "^4.3.2",
     "adaptive-bezier-curve": "^1.0.3",
     "autoprefixer": "^10.4.20",

@@ -11,6 +11,7 @@ import clsx from 'clsx';
 import 'simplebar-react/dist/simplebar.min.css';
 import { saveAs } from 'file-saver';
 import { downloadZip } from 'client-zip';
+import { useWindowSize } from '@uidotdev/usehooks';
 
 import { app } from 'src/state/app';
 import { settings } from 'src/state/settings';
@@ -164,6 +165,7 @@ const ImagePlaceholder = () => (
 export const Main = () => {
   const appSnap = useSnapshot(app);
   const settingSnap = useSnapshot(settings);
+  const size = useWindowSize();
 
   const [currentTab, setCurrentTab] = useState('preview');
 
@@ -203,8 +205,21 @@ export const Main = () => {
     gridTemplateColumns: `repeat(${previewCols}, 1fr)`,
   };
 
+  const sidebarStyle =
+    size.width > 1000
+      ? {
+          'left-[420px]': appSnap.sidebarOpen,
+          'left-0': !appSnap.sidebarOpen,
+        }
+      : 'left-0';
+
   return (
-    <div className="fixed left-[420px] top-0 w-[calc(100%-420px)] h-[calc(100%-75px)] overflow-y-auto">
+    <div
+      className={clsx(
+        'fixed top-[50px] right-0 h-[calc(100%-75px-50px)] overflow-y-auto transition-all',
+        sidebarStyle
+      )}
+    >
       <div className="flex justify-center p-8">
         <div className="w-full max-w-[1000px]">
           <div
@@ -220,7 +235,7 @@ export const Main = () => {
               </div>
             )}
             <div className="text-muted">
-              <span>Selected file:</span>
+              <span>Selected file:</span>{' '}
               <span className={clsx({ 'text-primary': !!appSnap.fileName })}>
                 {appSnap.fileName || 'None'}
               </span>
@@ -271,7 +286,12 @@ export const Main = () => {
           </Tabs>
         </div>
       </div>
-      <div className="fixed bottom-0 left-[420px] w-[calc(100%-420px)] h-[75px] p-4 bg-accent border-t">
+      <div
+        className={clsx(
+          'fixed bottom-0 right-0 h-[75px] p-4 bg-accent border-t',
+          sidebarStyle
+        )}
+      >
         <div className="flex justify-end gap-4">
           {!settingSnap.autoRefresh && (
             <Button
