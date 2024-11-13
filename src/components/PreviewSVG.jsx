@@ -15,6 +15,8 @@ export const PreviewSVG = ({ preview, width, height }) => {
 
   const { display } = settingSnap;
   const paperViewBox = `0 0 ${width || 0} ${height || 0}`;
+  const midX = (Number(width) || 0) * 0.5;
+  const midY = (Number(height) || 0) * 0.5;
 
   return (
     <PreviewSVGRoot>
@@ -28,9 +30,19 @@ export const PreviewSVG = ({ preview, width, height }) => {
         {display.toolOff && (
           <path d={preview.upPath} className="stroke-orange-300/75" />
         )}
-        {display.toolOn && (
-          <path d={preview.downPath} className="stroke-zinc-200" />
-        )}
+        {display.toolOn &&
+          (preview.downPath ? (
+            <path d={preview.downPath} className="stroke-zinc-200" />
+          ) : (
+            <text
+              x={midX}
+              y={midY}
+              className="fill-muted font-mono text-4xl"
+              textAnchor="middle"
+            >
+              (empty)
+            </text>
+          ))}
         {display.margins && (
           <path
             d={preview.marginsPath}
