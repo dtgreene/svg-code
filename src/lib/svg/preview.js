@@ -10,6 +10,8 @@ export function generateSVG(d, width, height, strokeWidth) {
   strokeWidth="${strokeWidth}"
   stroke="#000"
   fill="none"
+  width="${width || 0}mm"
+  height="${height || 0}mm"
 >
   <path d="${d}" />
 </svg>`;
