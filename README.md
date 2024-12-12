@@ -28,3 +28,5 @@ Built using React, Vite, TailwindCSS, and [Shadcn](https://github.com/shadcn-ui/
 
 <img src="https://github.com/user-attachments/assets/ebed609d-10aa-491b-83f7-8b52c738f87b" width="400px" />
 <img src="https://github.com/user-attachments/assets/1851ffb3-8524-4b56-b1c9-6295b9090e70" width="600px" />
+<img src="https://github.com/user-attachments/assets/6b83d7fa-1d6e-4a53-8cfe-044067b390c0" width="600px" />
+
