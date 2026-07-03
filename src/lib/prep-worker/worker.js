@@ -49,6 +49,7 @@ export function workerStart() {
     alignment: alignmentIndex,
     rotation: Number(rotation) || 0,
     useBoundingBox,
+    origin: settings.gcode.origin,
     postProcessing: {
       merge,
       mergeTolerance: Number(mergeTolerance) || 0,

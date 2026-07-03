@@ -35,6 +35,9 @@ export const settings = createStorageProxy(StorageKeys.SETTINGS, {
   },
   gcode: {
     feedRate: '300',
+    origin: 'bottom-left',
+    invertX: false,
+    invertY: false,
     toolOnSequence: '',
     toolOffSequence: '',
     programBeginSequence: '',

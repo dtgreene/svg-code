@@ -18,11 +18,11 @@ export const Sidebar = () => {
   return (
     <SimpleBar
       className={clsx(
-        'w-[420px] h-[calc(100%-50px)] fixed left-0 top-[50px] border-r bg-accent overflow-x-hidden z-10 transition-all',
+        'w-sidebar h-[calc(100%-var(--spacing-header))] fixed left-0 top-header border-r bg-accent overflow-x-hidden z-10 transition-all',
         {
           'left-0': appSnap.sidebarOpen,
-          'left-[-420px]': !appSnap.sidebarOpen,
-        }
+          'left-sidebar': !appSnap.sidebarOpen,
+        },
       )}
     >
       <Tabs

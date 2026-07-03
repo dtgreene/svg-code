@@ -1,5 +1,7 @@
 import { nanoid } from 'nanoid';
 
+import { getOriginPoint } from '../origin';
+
 export function generateSVG(d, width, height, strokeWidth) {
   const paperViewBox = `0 0 ${width || 0} ${height || 0}`;
 
@@ -19,14 +21,14 @@ export function generateSVG(d, width, height, strokeWidth) {
 
 export function createPreview(cell, options) {
   const { pathList, pathBounds, gridBounds } = cell;
-  const { width, height, marginX, marginY } = options;
+  const { width, height, marginX, marginY, origin } = options;
 
   let downPath = '';
   let upPath = '';
   let pathBoundsPath = '';
   let gridBoundsPath = '';
   let marginsPath = '';
-  let position = { x: 0, y: height };
+  let position = getOriginPoint(origin, width, height);
 
   if (pathList.length > 0) {
     pathList.forEach((path) => {

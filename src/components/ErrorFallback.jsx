@@ -11,7 +11,7 @@ export const ErrorFallback = ({ error }) => {
 
   return (
     <div className="p-16 flex justify-center">
-      <div className="border bg-accent rounded-md p-8 max-w-[600px]">
+      <div className="border bg-accent rounded-md p-8 max-w-150">
         <div className="mb-4 text-4xl">Oops</div>
         <div className="mb-8">
           <div>Something went wrong...</div>

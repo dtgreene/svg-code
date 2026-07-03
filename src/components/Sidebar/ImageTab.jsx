@@ -140,7 +140,7 @@ export const ImageTab = () => {
           </div>
           <Button
             variant="ghost"
-            className="h-auto p-1"
+            className="h-auto p-1 cursor-pointer"
             onClick={handleDimensionSwapClick}
           >
             <ArrowLeftRight size="24px" />

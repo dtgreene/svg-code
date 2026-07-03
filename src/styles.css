@@ -1,6 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@plugin 'tailwindcss-animate';
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @font-face {
   font-family: 'Montserrat';
@@ -8,39 +9,47 @@
   src: url('./assets/Montserrat-VariableFont_wght.ttf') format('opentype');
 }
 
-@layer base {
-  :root {
-    --background: #191920;
-    --foreground: #eee;
-    --ring: var(--foreground);
+@theme {
+  --color-background: #191920;
+  --color-foreground: #eee;
+  --color-ring: var(--color-foreground);
 
-    --muted: #a4a4b3;
-    --muted-foreground: #595959;
+  --color-muted: #a4a4b3;
+  --color-muted-foreground: #595959;
 
-    --primary: #30b8fc;
-    --primary-foreground: #000;
+  --color-primary: #30b8fc;
+  --color-primary-foreground: #000;
 
-    --destructive: #e86a6a;
-    --destructive-foreground: #f8fafc;
+  --color-destructive: #e86a6a;
+  --color-destructive-foreground: #f8fafc;
 
-    --accent: #111117;
-    --accent-foreground: #fff;
+  --color-accent: #111117;
+  --color-accent-foreground: #fff;
 
-    --popover: var(--background);
-    --popover-foreground: var(--foreground);
+  --color-popover: var(--color-background);
+  --color-popover-foreground: var(--color-foreground);
 
-    --font-montseratt: 'Montserrat';
-  }
+  --font-sans: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
+
+  --spacing-header: 50px;
+  --spacing-footer: 75px;
+  --spacing-sidebar: 420px;
 }
 
 @layer base {
-  * {
-    box-sizing: border-box;
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-zinc-700);
   }
 
   body {
     @apply bg-background text-foreground overflow-hidden;
-    font-feature-settings: 'rlig' 1, 'calt' 1;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
   }
 
   select {
@@ -53,9 +62,9 @@
 }
 
 .svg-preview svg {
-  @apply bg-accent border overflow-hidden max-h-[800px];
+  @apply bg-accent border overflow-hidden max-h-200;
 }
 
 .simplebar-scrollbar::before {
-  background-color: var(--foreground);
+  background-color: var(--color-foreground);
 }

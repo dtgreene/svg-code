@@ -1,10 +1,7 @@
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
-import tailwindcss from 'tailwindcss';
-import autoprefixer from 'autoprefixer';
 import react from '@vitejs/plugin-react';
-
-import tailwindConfig from './tailwind.config';
+import tailwindcss from '@tailwindcss/vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,7 +9,7 @@ export default defineConfig({
     open: true,
     port: 3000,
   },
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
       src: resolve(__dirname, 'src'),
@@ -22,10 +19,5 @@ export default defineConfig({
   build: {
     outDir: resolve(__dirname, 'dist'),
     emptyOutDir: true,
-  },
-  css: {
-    postcss: {
-      plugins: [tailwindcss(tailwindConfig), autoprefixer()],
-    },
   },
 });

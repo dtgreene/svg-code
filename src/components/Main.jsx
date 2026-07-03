@@ -8,7 +8,6 @@ import {
   RefreshCwIcon,
 } from 'lucide-react';
 import clsx from 'clsx';
-import 'simplebar-react/dist/simplebar.min.css';
 import { saveAs } from 'file-saver';
 import { downloadZip } from 'client-zip';
 import { useWindowSize } from '@uidotdev/usehooks';
@@ -39,7 +38,7 @@ function handleFileDrop([file]) {
     if (blob.size < maxFileSize) {
       localStorage.setItem(
         StorageKeys.FILE,
-        JSON.stringify({ name: file.name, data: reader.result })
+        JSON.stringify({ name: file.name, data: reader.result }),
       );
     } else {
       localStorage.removeItem(StorageKeys.FILE);
@@ -70,7 +69,7 @@ async function handleDownloadSVGClick() {
       downPaths[0],
       options.width,
       options.height,
-      strokeWidth
+      strokeWidth,
     );
     const blob = new Blob([file], { type: 'image/svg+xml' });
 
@@ -85,7 +84,7 @@ async function handleDownloadSVGClick() {
           downPath,
           options.width,
           options.height,
-          strokeWidth
+          strokeWidth,
         ),
       };
     });
@@ -100,6 +99,9 @@ async function handleDownloadGCodeClick() {
 
   const {
     feedRate,
+    origin,
+    invertX,
+    invertY,
     toolOnSequence,
     toolOffSequence,
     programBeginSequence,
@@ -108,6 +110,9 @@ async function handleDownloadGCodeClick() {
 
   const gcodeOptions = {
     feedRate: Math.round(Number(feedRate) || 0),
+    origin,
+    invertX,
+    invertY,
     toolOnSequence,
     toolOffSequence,
     programBeginSequence,
@@ -160,7 +165,7 @@ function handleBackdropClick() {
 }
 
 const ImagePlaceholder = () => (
-  <div className="flex flex-col items-center justify-center text-muted h-[300px] bg-accent border rounded-md">
+  <div className="flex flex-col items-center justify-center text-muted h-75 bg-accent border rounded-md">
     <FileImageIcon width="120" height="120" />
     <div>Image will appear here</div>
   </div>
@@ -199,7 +204,7 @@ export const Main = () => {
   });
 
   const combinedErrors = [settingSnap.inputError, appSnap.workerError].filter(
-    Boolean
+    Boolean,
   );
 
   const previews = appSnap.workerData?.previews;
@@ -220,12 +225,12 @@ export const Main = () => {
   return (
     <div
       className={clsx(
-        'fixed top-[50px] right-0 h-[calc(100%-75px-50px)] overflow-y-auto transition-all',
-        sidebarStyle
+        'fixed top-header right-0 h-[calc(100%-var(--spacing-footer)-var(--spacing-header))] overflow-y-auto transition-all',
+        sidebarStyle,
       )}
     >
       <div className="flex justify-center p-8">
-        <div className="w-full max-w-[1000px]">
+        <div className="w-full max-w-250">
           <div
             {...getRootProps()}
             className="border-dashed border rounded-md bg-background px-12 py-8 cursor-pointer mb-8"
@@ -292,8 +297,8 @@ export const Main = () => {
       </div>
       <div
         className={clsx(
-          'fixed bottom-0 right-0 h-[75px] p-4 bg-accent border-t',
-          sidebarStyle
+          'fixed bottom-0 right-0 h-footer p-4 bg-accent border-t',
+          sidebarStyle,
         )}
       >
         <div className="flex justify-end gap-4">
@@ -329,8 +334,8 @@ export const Main = () => {
       {!isScreenLarge && appSnap.sidebarOpen && (
         <div
           className={clsx(
-            'fixed top-[50px] right-0 bottom-0 bg-zinc-950/50',
-            sidebarStyle
+            'fixed top-header right-0 bottom-0 bg-zinc-950/50',
+            sidebarStyle,
           )}
           onClick={handleBackdropClick}
         />
