@@ -16,14 +16,17 @@ export function getPathGrid(pathList, options) {
   if (grid.enabled) {
     const totalWidth = grid.totalWidth;
     const totalHeight = grid.totalHeight;
-    const { pathList: scaledPathList, pathBounds: scaledPathBounds } =
-      scalePathList(pathList, {
-        ...options,
-        width: totalWidth,
-        height: totalHeight,
-        marginX: 0,
-        marginY: 0,
-      });
+    const {
+      pathList: scaledPathList,
+      pathBounds: scaledPathBounds,
+      viewBoxQuad: scaledViewBoxQuad,
+    } = scalePathList(pathList, {
+      ...options,
+      width: totalWidth,
+      height: totalHeight,
+      marginX: 0,
+      marginY: 0,
+    });
 
     const cellWidth = options.width - marginX * 2;
     const cellHeight = options.height - marginY * 2;
@@ -98,14 +101,20 @@ export function getPathGrid(pathList, options) {
           scaledPathBounds,
           xOffset,
           yOffset,
-          options
+          options,
         );
         const gridBounds = createCellBounds(
           totalGridBounds,
           xOffset,
           yOffset,
-          options
+          options,
         );
+        // The preview clips to the page, so the quad only needs shifting into
+        // the cell's local space; no clamping like the bounds above.
+        const viewBoxQuad = scaledViewBoxQuad.map((point) => ({
+          x: point.x - xOffset + marginX,
+          y: point.y - yOffset + marginY,
+        }));
 
         if (includeCorners) {
           pathList.unshift(...cornerPathList);
@@ -115,6 +124,7 @@ export function getPathGrid(pathList, options) {
           pathList,
           pathBounds,
           gridBounds,
+          viewBoxQuad,
         };
       }),
       cols,
@@ -204,7 +214,7 @@ export function getPathList(elements, options) {
               [currentX, currentY],
               [x1, y1],
               [x2, y2],
-              [x3, y3]
+              [x3, y3],
             ).flat();
 
             // If the previous command was a move, then we need to overwrite the
@@ -226,7 +236,7 @@ export function getPathList(elements, options) {
           default: {
             console.warn(
               'Encountered unknown command during path parsing:',
-              command
+              command,
             );
           }
         }
@@ -371,7 +381,44 @@ function scalePathList(pathList, options) {
   pathBounds.maxX = (pathBounds.maxX + offsetX) * scale + alignX + marginX;
   pathBounds.maxY = (pathBounds.maxY + offsetY) * scale + alignY + marginY;
 
-  return { pathList: pathListCopy, pathBounds };
+  // The view box's corners mapped into page space. The corners are rotated
+  // around the same pivot as the paths, so under rotation this is a tilted quad
+  // rather than an axis-aligned rect.
+  const viewBoxQuad = [
+    { x: 0, y: 0 },
+    { x: parentWidth, y: 0 },
+    { x: parentWidth, y: parentHeight },
+    { x: 0, y: parentHeight },
+  ].map((corner) => {
+    const rotated = rotatePoint(
+      corner,
+      parentWidth * 0.5,
+      parentHeight * 0.5,
+      rotation,
+    );
+
+    return {
+      x: (rotated.x + offsetX) * scale + alignX + marginX,
+      y: (rotated.y + offsetY) * scale + alignY + marginY,
+    };
+  });
+
+  return { pathList: pathListCopy, pathBounds, viewBoxQuad };
+}
+
+function rotatePoint(point, centerX, centerY, degrees) {
+  if (degrees === 0) return point;
+
+  const radians = (degrees * Math.PI) / 180;
+  const cos = Math.cos(radians);
+  const sin = Math.sin(radians);
+  const dx = point.x - centerX;
+  const dy = point.y - centerY;
+
+  return {
+    x: centerX + dx * cos - dy * sin,
+    y: centerY + dx * sin + dy * cos,
+  };
 }
 
 function dividePathList(pathList, options) {
@@ -412,7 +459,7 @@ function dividePathList(pathList, options) {
             // An invalid point will never be added to a cell and would cause an
             // infinite loop.
             throw new Error(
-              `Invalid point found during path division: ${point.x}, ${point.y}`
+              `Invalid point found during path division: ${point.x}, ${point.y}`,
             );
           }
 
@@ -438,7 +485,7 @@ function dividePathList(pathList, options) {
               const splitPoint = splitSegment(
                 innerPoint,
                 outerPoint,
-                cellBounds
+                cellBounds,
               );
               const pathSlice = currentPath
                 .slice(prevCrossIndex, index)

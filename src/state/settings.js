@@ -31,6 +31,7 @@ export const settings = createStorageProxy(StorageKeys.SETTINGS, {
     margins: true,
     pathBounds: false,
     gridBounds: false,
+    viewBox: false,
     strokeWidth: '1',
   },
   gcode: {

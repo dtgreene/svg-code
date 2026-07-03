@@ -27,6 +27,10 @@ function handleDisplayGridBoundsChange(value) {
   settings.display.gridBounds = value;
 }
 
+function handleDisplayViewBoxChange(value) {
+  settings.display.viewBox = value;
+}
+
 function handleStrokeWidthChange(event) {
   settings.display.strokeWidth = event.target.value;
 }
@@ -88,18 +92,24 @@ export const AppTab = () => {
             <span>Path Bounds</span>
           </Label>
         </div>
-        {settingSnap.grid.enabled && (
-          <div className="flex">
-            <Label className="flex items-center gap-2 w-1/2">
-              <Switch
-                checked={settingSnap.display.gridBounds}
-                onCheckedChange={handleDisplayGridBoundsChange}
-              />
-              <div className="w-4 h-4 rounded bg-red-500/75"></div>
-              <span>Grid Bounds</span>
-            </Label>
-          </div>
-        )}
+        <div className="flex">
+          <Label className="flex items-center gap-2 w-1/2">
+            <Switch
+              checked={settingSnap.display.viewBox}
+              onCheckedChange={handleDisplayViewBoxChange}
+            />
+            <div className="w-4 h-4 rounded bg-blue-400/75"></div>
+            <span>View Box</span>
+          </Label>
+          <Label className="flex items-center gap-2 w-1/2">
+            <Switch
+              checked={settingSnap.display.gridBounds}
+              onCheckedChange={handleDisplayGridBoundsChange}
+            />
+            <div className="w-4 h-4 rounded bg-red-500/75"></div>
+            <span>Grid Bounds</span>
+          </Label>
+        </div>
         <div>
           <Label className="block mb-2 text-muted">Stroke Width</Label>
           <Input

@@ -20,7 +20,7 @@ export function generateSVG(d, width, height, strokeWidth) {
 }
 
 export function createPreview(cell, options) {
-  const { pathList, pathBounds, gridBounds } = cell;
+  const { pathList, pathBounds, gridBounds, viewBoxQuad } = cell;
   const { width, height, marginX, marginY, origin } = options;
 
   let downPath = '';
@@ -28,6 +28,7 @@ export function createPreview(cell, options) {
   let pathBoundsPath = '';
   let gridBoundsPath = '';
   let marginsPath = '';
+  let viewBoxPath = '';
   let position = getOriginPoint(origin, width, height);
 
   if (pathList.length > 0) {
@@ -61,12 +62,17 @@ export function createPreview(cell, options) {
     gridBoundsPath = getBoundsPath(gridBounds);
   }
 
+  if (viewBoxQuad) {
+    viewBoxPath = getQuadPath(viewBoxQuad);
+  }
+
   return {
     downPath,
     upPath,
     marginsPath,
     pathBoundsPath,
     gridBoundsPath,
+    viewBoxPath,
     width,
     height,
     id: nanoid(),
@@ -75,11 +81,18 @@ export function createPreview(cell, options) {
 
 function getBoundsPath(bounds) {
   const { minX, minY, maxX, maxY } = bounds;
-  return [
-    `M${minX},${minY}`,
-    `L${maxX},${minY}`,
-    `L${maxX},${maxY}`,
-    `L${minX},${maxY}`,
-    `L${minX},${minY}`,
-  ].join(' ');
+  return getQuadPath([
+    { x: minX, y: minY },
+    { x: maxX, y: minY },
+    { x: maxX, y: maxY },
+    { x: minX, y: maxY },
+  ]);
+}
+
+function getQuadPath(points) {
+  const commands = points.map((point, index) => {
+    return `${index === 0 ? 'M' : 'L'}${point.x},${point.y}`;
+  });
+
+  return `${commands.join(' ')} Z`;
 }

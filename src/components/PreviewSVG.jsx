@@ -53,6 +53,9 @@ export const PreviewSVG = ({ preview, width, height }) => {
         {display.pathBounds && (
           <path d={preview.pathBoundsPath} className="stroke-green-500/75" />
         )}
+        {display.viewBox && (
+          <path d={preview.viewBoxPath} className="stroke-blue-400/75" />
+        )}
         {display.gridBounds && settingSnap.grid.enabled && (
           <path d={preview.gridBoundsPath} className="stroke-red-500" />
         )}
